@@ -5,6 +5,7 @@ using UnityEngine;
 public class ManagerScript : MonoBehaviour
 {
     ITouchable selectedObject;
+
     void Start()
     {
     }

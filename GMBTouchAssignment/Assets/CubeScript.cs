@@ -24,6 +24,16 @@ public class CubeScript : MonoBehaviour, ITouchable
     {
         r.material.color = color;
     }
+  
+    public Vector3 GetPosition()
+    {
+        return transform.position;
+    }
+
+    public void SetPosition(Vector3 newPosition)
+    {
+        transform.position = newPosition;
+    }
 
     void Update()
     {

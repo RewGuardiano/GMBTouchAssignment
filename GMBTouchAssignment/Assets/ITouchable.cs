@@ -5,4 +5,5 @@ using UnityEngine;
 interface ITouchable
 {
     void SelectToggle(bool isSelected);
+
 }
