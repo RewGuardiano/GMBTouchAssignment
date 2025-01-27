@@ -8,10 +8,8 @@ public class GestureManager : MonoBehaviour
     float timer = 0;
     float maxTimer = 0.5f;
     ManagerScript managerScript;
-    private Vector2 lastTouchPosition;
-    private CameraController cameraController;
-
-    // Start is called before the first frame update
+   
+    
     void Start()
     {
         if (managerScript == null)
@@ -19,7 +17,7 @@ public class GestureManager : MonoBehaviour
             managerScript = FindObjectOfType<ManagerScript>();
         }
 
-        cameraController = FindObjectOfType<CameraController>();
+   
     }
 
     
@@ -39,13 +37,14 @@ public class GestureManager : MonoBehaviour
 
                 case TouchPhase.Began:
                     timer = 0;
-                    lastTouchPosition = t.position;
+                    
+                    hasMoved = false;
                     break;
 
                 case TouchPhase.Moved:
-
                     hasMoved = true;
                     break;
+                    
 
                 case TouchPhase.Ended:
                     if ((timer < maxTimer) && hasMoved)
