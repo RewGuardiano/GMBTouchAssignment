@@ -1,42 +1,83 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public float strafeSpeed = 0.01f;
-    public float rotationSpeed = 0.5f;
-    public float zoomSpeed = 0.5f;
+    ITouchable selectedObject;
 
-    private Transform cameraTransform;
-    private Vector3 targetPosition;
-    private float currentDistance;
+    public float panSpeed = 10f;
+    public float rotationSpeed = 2.0f;
+   
+
+    private ManagerScript managerScript;
+    private Vector3 lastPanPosition;
+    private bool isPanning = false;
+    private Vector2 lastTouchPosition;
 
     void Start()
     {
-        cameraTransform = Camera.main.transform;
-        targetPosition = Vector3.zero; // Assuming we're orbiting around the world origin
-        currentDistance = Vector3.Distance(cameraTransform.position, targetPosition);
+        managerScript = FindObjectOfType<ManagerScript>();
     }
 
-    public void HandleStrafe(Vector2 delta)
+    void Update()
     {
-        Vector3 right = cameraTransform.right;
-        Vector3 up = cameraTransform.up;
+        if (Input.touchCount == 1)
+        {
+            Touch t = Input.GetTouch(0);
 
-        Vector3 strafe = (right * -delta.x + up * -delta.y) * strafeSpeed;
-        targetPosition += strafe;
-        cameraTransform.position += strafe;
+            if (t.phase == TouchPhase.Began)
+            {
+                if (selectedObject == null)
+                {
+                    lastPanPosition = t.position;
+                    isPanning = true;
+                }
+            }
+            else if (t.phase == TouchPhase.Moved && isPanning)
+            {
+                PanCamera(t.position);
+            }
+            else if (t.phase == TouchPhase.Ended)
+            {
+                isPanning = false;
+            }
+        }
+        else if (Input.touchCount == 2)
+        {
+            Touch t1 = Input.GetTouch(0);
+            Touch t2 = Input.GetTouch(1);
+
+            if (t1.phase == TouchPhase.Began || t2.phase == TouchPhase.Began)
+            {
+                lastTouchPosition = t1.position - t2.position;
+            }
+            else if (t1.phase == TouchPhase.Moved || t2.phase == TouchPhase.Moved)
+            {
+                Vector2 currentTouchPosition = t1.position - t2.position;
+                float angle = Vector2.SignedAngle(lastTouchPosition, currentTouchPosition);
+
+                OrbitCamera(angle);
+                lastTouchPosition = currentTouchPosition;
+            }
+        }
     }
 
-    public void HandleRotation(Vector2 rotationDelta, float zoomDelta)
+    void PanCamera(Vector3 newPanPosition)
     {
-        // Rotation
-        cameraTransform.RotateAround(targetPosition, Vector3.up, rotationDelta.x * rotationSpeed);
-        cameraTransform.RotateAround(targetPosition, cameraTransform.right, -rotationDelta.y * rotationSpeed);
+        Vector3 offset = Camera.main.ScreenToViewportPoint(lastPanPosition - newPanPosition);
 
-        // Zoom
-        currentDistance = Mathf.Clamp(currentDistance - zoomDelta * zoomSpeed, 1f, 20f);
-        cameraTransform.position = targetPosition - cameraTransform.forward * currentDistance;
+        // Move the camera in world space
+        Vector3 move = new Vector3(offset.x * panSpeed, 0, offset.y * panSpeed);
+        transform.Translate(move, Space.World);
+
+        lastPanPosition = newPanPosition;
+
+       
+    }
+
+    void OrbitCamera(float angle)
+    {
+
+        transform.RotateAround(transform.position, Vector3.up, angle * rotationSpeed);
+
     }
 }

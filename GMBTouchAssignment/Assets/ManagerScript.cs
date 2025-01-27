@@ -6,6 +6,7 @@ public class ManagerScript : MonoBehaviour
 {
     ITouchable selectedObject;
 
+
     void Start()
     {
     }
@@ -30,6 +31,16 @@ public class ManagerScript : MonoBehaviour
                 newObject.SelectToggle(true);
 
             }
+            else
+            {
+                // No object hit
+                if (selectedObject != null)
+                {
+                    selectedObject.SelectToggle(false);
+                    selectedObject = null;
+                }
+            }
         }
+
     }
 }

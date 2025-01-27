@@ -14,7 +14,7 @@ public class CubeScript : MonoBehaviour, ITouchable
     {
         if (selected)
         {
-            changeColor(Color.blue);
+            changeColor(Color.yellow);
         }
         else
             changeColor(Color.white);
