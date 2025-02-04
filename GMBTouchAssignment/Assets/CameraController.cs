@@ -8,6 +8,7 @@ public class CameraController : MonoBehaviour
     public float rotationSpeed = 2.0f;
    
 
+
     private ManagerScript managerScript;
     private Vector3 lastPanPosition;
     private bool isPanning = false;
@@ -20,6 +21,8 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
+
+        
         if (Input.touchCount == 1)
         {
             Touch t = Input.GetTouch(0);
@@ -80,4 +83,7 @@ public class CameraController : MonoBehaviour
         transform.RotateAround(transform.position, Vector3.up, angle * rotationSpeed);
 
     }
+
+
+  
 }

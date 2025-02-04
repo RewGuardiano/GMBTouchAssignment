@@ -6,4 +6,6 @@ public interface ITouchable
 {
     void SelectToggle(bool isSelected);
 
+    void MoveObject(Transform transform, Touch touch);
+
 }
