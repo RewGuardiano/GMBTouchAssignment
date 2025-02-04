@@ -11,7 +11,7 @@ public class ManagerScript : MonoBehaviour
 
     void Start()
     {
-        cameraController = GetComponent<CameraController>();
+        cameraController = FindObjectOfType<CameraController>();
     }
     void Update()
     {
@@ -73,6 +73,14 @@ public class ManagerScript : MonoBehaviour
         if (selectedObject is ITouchable obj)
         {
             obj.MoveObject(selectedTransform, touch);
+        }
+    }
+    public void OnObjectScaleAndRotate(Touch t1, Touch t2)
+    {
+        if (selectedObject is BaseObjectScript obj)
+        {
+            obj.ScaleObject(t1, t2);
+            obj.RotateObject(t1, t2);
         }
     }
 }
