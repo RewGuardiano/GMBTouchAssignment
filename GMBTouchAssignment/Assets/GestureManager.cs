@@ -55,5 +55,10 @@ public class GestureManager : MonoBehaviour
             }
             print(t.phase);
         }
+        //Handles two finger touches on the screen for Scaling and Rotation.
+        if (Input.touchCount == 2)
+        {
+            managerScript.OnObjectScaleAndRotate(Input.GetTouch(0), Input.GetTouch(1));
+        }
     }
 }
