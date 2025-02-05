@@ -75,12 +75,12 @@ public class ManagerScript : MonoBehaviour
             obj.MoveObject(selectedTransform, touch);
         }
     }
-    public void OnObjectScaleAndRotate(Touch t1, Touch t2)
+    public void OnObjectScaleAndRotate(Touch touch1, Touch touch2)
     {
         if (selectedObject is BaseObjectScript obj)
         {
-            obj.ScaleObject(t1, t2);
-            obj.RotateObject(t1, t2);
+            obj.ScaleObject(touch1, touch2);
+            obj.RotateObject(touch1, touch2);
         }
     }
 }

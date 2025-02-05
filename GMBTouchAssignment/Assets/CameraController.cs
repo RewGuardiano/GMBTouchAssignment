@@ -5,14 +5,21 @@ public class CameraController : MonoBehaviour
     ITouchable selectedObject;
 
     public float panSpeed = 10f;
-    public float rotationSpeed = 2.0f;
-   
+    public float rotationSpeed = 0.2f;
+    public float zoomSpeed = 1f;
 
 
+    private float lastPinchDistance;
+    private Vector2 lastMidPoint;
     private ManagerScript managerScript;
     private Vector3 lastPanPosition;
     private bool isPanning = false;
     private Vector2 lastTouchPosition;
+ 
+
+
+    public Transform groundPlane;
+
 
     void Start()
     {
@@ -46,20 +53,34 @@ public class CameraController : MonoBehaviour
         }
         else if (Input.touchCount == 2)
         {
-            Touch t1 = Input.GetTouch(0);
-            Touch t2 = Input.GetTouch(1);
+            Touch touch1 = Input.GetTouch(0);
+            Touch touch2 = Input.GetTouch(1);
 
-            if (t1.phase == TouchPhase.Began || t2.phase == TouchPhase.Began)
+            Vector2 currentMidpoint = (touch1.position + touch2.position) / 2;
+
+            if (touch1.phase == TouchPhase.Began || touch2.phase == TouchPhase.Began)
             {
-                lastTouchPosition = t1.position - t2.position;
+                //Initialize rotation/zoom
+                lastMidPoint = currentMidpoint;
+                lastPinchDistance = Vector2.Distance(touch1.position, touch2.position);
             }
-            else if (t1.phase == TouchPhase.Moved || t2.phase == TouchPhase.Moved)
+            else if (touch1.phase == TouchPhase.Moved || touch2.phase == TouchPhase.Moved)
             {
-                Vector2 currentTouchPosition = t1.position - t2.position;
-                float angle = Vector2.SignedAngle(lastTouchPosition, currentTouchPosition);
+                //rotation of camera based on midpoint movement
+                Vector2 cameraRotationDelta = currentMidpoint - lastMidPoint;
+                float horizontalAngle = cameraRotationDelta.x * rotationSpeed;
+                OrbitCameraHorizontal(horizontalAngle);
 
-                OrbitCamera(angle);
-                lastTouchPosition = currentTouchPosition;
+                float verticalAngle = -cameraRotationDelta.y * rotationSpeed;
+                OrbitCameraVertical(verticalAngle);
+                lastMidPoint = currentMidpoint;
+
+                //Zoom camera base on pinch distance
+
+                float currentPinchDistance = Vector2.Distance(touch1.position,touch2.position);
+                float pinchDelta = currentPinchDistance - lastPinchDistance;
+                CameraZoom(pinchDelta * zoomSpeed);
+                lastPinchDistance = currentPinchDistance;
             }
         }
     }
@@ -68,22 +89,31 @@ public class CameraController : MonoBehaviour
     {
         Vector3 offset = Camera.main.ScreenToViewportPoint(lastPanPosition - newPanPosition);
 
-        // Move the camera in world space
-        Vector3 move = new Vector3(offset.x * panSpeed, 0, offset.y * panSpeed);
+        Vector3 right = Vector3.ProjectOnPlane(transform.right, Vector3.up);
+        Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
+
+        Vector3 move = (right * offset.x + forward * offset.y) * panSpeed;
+
         transform.Translate(move, Space.World);
 
         lastPanPosition = newPanPosition;
-
-       
     }
 
-    void OrbitCamera(float angle)
+    void OrbitCameraHorizontal(float angle)
     {
-
-        transform.RotateAround(transform.position, Vector3.up, angle * rotationSpeed);
-
+        transform.RotateAround(transform.position, groundPlane.up, angle);
     }
 
+    void OrbitCameraVertical(float angle)
+    {
+        transform.RotateAround(transform.position, transform.right, angle);
+    }
+    void CameraZoom(float pinchDelta)
+    {
+        //Move the camera along its forward direction based on pinch delta
+        Vector3 zoomDirection = transform.forward * (pinchDelta * zoomSpeed * Time.deltaTime);
+        transform.position += zoomDirection;
+    }
 
   
 }
