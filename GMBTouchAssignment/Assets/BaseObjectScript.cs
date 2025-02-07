@@ -41,7 +41,7 @@ public class BaseObjectScript : MonoBehaviour,ITouchable
     {
         Vector2 currentMidpoint = (t1.position + t2.position) / 2;
         Vector2 delta = currentMidpoint - lastTouchPosition;
-        float rotationSpeed = 0.2f;
+        float rotationSpeed = 0.3f;
         transform.Rotate(Vector3.up, delta.x * rotationSpeed, Space.World);
         lastTouchPosition = currentMidpoint;
     }
