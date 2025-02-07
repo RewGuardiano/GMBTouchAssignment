@@ -63,6 +63,14 @@ public class ManagerScript : MonoBehaviour
                     selectedTransform = info.collider.transform;
                     newObject.SelectToggle(true);
                 }
+
+            }
+            else
+            {
+             
+                selectedObject?.SelectToggle(false);
+                selectedObject = null;
+                selectedTransform = null;
             }
 
         }
