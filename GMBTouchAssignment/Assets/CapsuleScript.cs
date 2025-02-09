@@ -36,7 +36,7 @@ public class CapsuleScript : BaseObjectScript
     public override void MoveObject(Transform transform, Touch touch)
     {
         //touch position on screen into a ray to detect the users touoch on the ground.
-        Ray ray = Camera.main.ScreenPointToRay(transform.position);
+        Ray ray = Camera.main.ScreenPointToRay(touch.position);
 
         // layer mask for detecting the ground, so preventing the ray from hitting objects that is not the ground.
         int maskGroundLayer = LayerMask.GetMask("Ground");
