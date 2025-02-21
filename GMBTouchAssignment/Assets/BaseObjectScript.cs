@@ -11,6 +11,7 @@ public class BaseObjectScript : MonoBehaviour,ITouchable
     protected float panSpeed = 10f;
     protected Renderer objectRenderer;
 
+
     protected virtual void Start()
     {
         objectRenderer = GetComponent<Renderer>();
@@ -22,6 +23,7 @@ public class BaseObjectScript : MonoBehaviour,ITouchable
 
     public virtual void MoveObject(Transform transform, Touch touch)
     {
+       
     }
     // Update is called once per frame
     void Update()
@@ -29,6 +31,7 @@ public class BaseObjectScript : MonoBehaviour,ITouchable
         
     }
 
+   
     public virtual void ScaleObject(Touch t1, Touch t2)
     {
         float currentDistance = Vector2.Distance(t1.position, t2.position);

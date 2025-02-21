@@ -5,14 +5,29 @@ using UnityEngine;
 public class CubeScript : BaseObjectScript
 {
     Renderer r;
+    private Rigidbody rb;
+   
 
     protected override void Start()
     {
-        r = GetComponent<Renderer>();
         base.Start();
-    }
-    
+        r = GetComponent<Renderer>(); // Ensure Renderer is assigned]
+        rb = GetComponent<Rigidbody>();
 
+
+        // Check if Rigidbody exists, if not, add one
+        rb = GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            rb = gameObject.AddComponent<Rigidbody>(); // Re-add Rigidbody if missing
+            rb.useGravity = true;
+           
+        }
+
+    }
+
+
+  
 
     public override void SelectToggle(bool selected)
     {
