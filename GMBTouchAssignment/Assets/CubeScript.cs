@@ -7,6 +7,7 @@ public class CubeScript : BaseObjectScript
     Renderer r;
     private Rigidbody rb;
     private bool hasStacked = false;
+    private bool canMove = true;
 
     private TowerGameScript gameScript;
 
@@ -25,6 +26,7 @@ public class CubeScript : BaseObjectScript
             rb.useGravity = true;
            
         }
+
         gameScript = FindObjectOfType<TowerGameScript>(); // Reference the main game script
     }
 
@@ -37,7 +39,12 @@ public class CubeScript : BaseObjectScript
             if (collision.contacts[0].normal.y > 0.5f) // Ensures it's a top-down collision
             {
                 hasStacked = true; // Mark this cube as stacked
+                canMove = false;
+                ChangeColor(Color.white);
                 gameScript.UpdateScore(); // Increase the score
+                gameScript.SpawnNewCube();
+
+
             }
         }
     }
@@ -45,13 +52,17 @@ public class CubeScript : BaseObjectScript
 
     public override void SelectToggle(bool selected)
     {
-        if (selected)
+        if (gameScript.IsGameOver()) return;//Disable selection if the game is over
+        if (canMove)
         {
-            ChangeColor(Color.yellow); // Change color when selected
-        }
-        else
-        {
-            ChangeColor(Color.white); // Change back when deselected
+            if (selected)
+            {
+                ChangeColor(Color.yellow); // Change color when selected
+            }
+            else
+            {
+                ChangeColor(Color.white); // Change back when deselected
+            }
         }
     }
 
@@ -64,8 +75,21 @@ public class CubeScript : BaseObjectScript
     // This method moves the object based on touch
     public override void MoveObject(Transform transform, Touch touch)
     {
-        
+        if (!canMove || gameScript.IsGameOver()) return;
         Vector3 touchPosition = Camera.main.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, Camera.main.WorldToScreenPoint(transform.position).z));
         transform.position = new Vector3(touchPosition.x, touchPosition.y, transform.position.z); // Keep the Z position the same
+
+        
     }
+
+    public override void ScaleObject(Touch t1, Touch t2)
+    {
+        // Do nothing (Disable scaling for cubes)
+    }
+
+    public override void RotateObject(Touch t1, Touch t2)
+    {
+        // Do nothing (Disable rotation for cubes)
+    }
+
 }
