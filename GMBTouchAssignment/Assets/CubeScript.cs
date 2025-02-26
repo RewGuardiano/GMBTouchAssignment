@@ -6,7 +6,9 @@ public class CubeScript : BaseObjectScript
 {
     Renderer r;
     private Rigidbody rb;
-   
+    private bool hasStacked = false;
+
+    private TowerGameScript gameScript;
 
     protected override void Start()
     {
@@ -23,11 +25,23 @@ public class CubeScript : BaseObjectScript
             rb.useGravity = true;
            
         }
-
+        gameScript = FindObjectOfType<TowerGameScript>(); // Reference the main game script
     }
 
+    // Detect when the cube lands on another cube
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!hasStacked && collision.gameObject.CompareTag("Stackable"))
+        {
+            // Check if we are actually landing on top
+            if (collision.contacts[0].normal.y > 0.5f) // Ensures it's a top-down collision
+            {
+                hasStacked = true; // Mark this cube as stacked
+                gameScript.UpdateScore(); // Increase the score
+            }
+        }
+    }
 
-  
 
     public override void SelectToggle(bool selected)
     {
