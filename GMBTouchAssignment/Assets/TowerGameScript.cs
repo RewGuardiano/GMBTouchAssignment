@@ -10,7 +10,7 @@ public class TowerGameScript : MonoBehaviour
     public Text scoreText;              // UI Text to display the score
     public GameObject gameOverPanel;    // UI Panel to show game over screen
 
-    private int score = -1;              // Tracks the score based on stack height
+    private int score = 0;              // Tracks the score based on stack height
 
     void Start()
     {
