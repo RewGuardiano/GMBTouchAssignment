@@ -17,9 +17,6 @@ public class CubeScript : BaseObjectScript
         r = GetComponent<Renderer>(); // Ensure Renderer is assigned]
         rb = GetComponent<Rigidbody>();
 
-
-        // Check if Rigidbody exists, if not, add one
-        rb = GetComponent<Rigidbody>();
         if (rb == null)
         {
             rb = gameObject.AddComponent<Rigidbody>(); // Re-add Rigidbody if missing
