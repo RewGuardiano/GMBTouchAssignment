@@ -81,12 +81,12 @@ public class CubeScript : BaseObjectScript
 
     public override void ScaleObject(Touch t1, Touch t2)
     {
-        // Do nothing (Disable scaling for cubes)
+       // Do nothing (Disable scaling for cubes)
     }
 
     public override void RotateObject(Touch t1, Touch t2)
     {
-        // Do nothing (Disable rotation for cubes)
+       // Do nothing (Disable rotation for cubes)
     }
 
 }
