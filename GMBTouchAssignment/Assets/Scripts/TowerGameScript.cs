@@ -15,6 +15,7 @@ public class TowerGameScript : MonoBehaviour
     private bool isGameOver = false;
 
     private int score = 0;              // Tracks the score based on stack height
+    private int winScore = 6; 
 
     //getter
     public bool IsGameOver()
@@ -39,8 +40,18 @@ public class TowerGameScript : MonoBehaviour
     {
         score++;
         scoreText.text = "Score: " + score;
+
+        if(score >= winScore)
+        {
+            WinGame();
+        }
     }
 
+    private void WinGame()
+    {
+        isGameOver = true;
+        SceneManager.LoadScene("WinScene"); // Load Win Scene
+    }
     // Checks if any object has fallen onto the ground plane
     private void CheckGameOver()
     {
@@ -70,6 +81,8 @@ public class TowerGameScript : MonoBehaviour
         
         SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Reload the current scene
     }
+
+    
 
     public void SpawnNewCube()
     {
