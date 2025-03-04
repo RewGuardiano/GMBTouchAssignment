@@ -15,7 +15,7 @@ public class TowerGameScript : MonoBehaviour
     private bool isGameOver = false;
 
     private int score = 0;              // Tracks the score based on stack height
-    private int winScore = 6; 
+    private int winScore = 5; 
 
     //getter
     public bool IsGameOver()
