@@ -70,7 +70,6 @@ public class TowerGameScript : MonoBehaviour
     private void GameOver()
     {
         gameOverPanel.SetActive(true);
-        Debug.Log("Game Over!");
         isGameOver = true;
         
     }
