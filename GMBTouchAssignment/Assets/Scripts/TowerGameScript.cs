@@ -10,6 +10,7 @@ public class TowerGameScript : MonoBehaviour
     public Transform groundPlane;       // The lower plane (used for game over detection)
     public Text scoreText;              // UI Text to display the score
     public GameObject gameOverPanel;    // UI Panel to show game over screen
+    public GameObject YouWinPanel;
     public GameObject cubePrefab;
     public Transform spawnPoint;
     private bool isGameOver = false;
@@ -27,6 +28,7 @@ public class TowerGameScript : MonoBehaviour
     {
         UpdateScore();
         gameOverPanel.SetActive(false);
+        YouWinPanel.SetActive(false);
         SpawnNewCube();
     }
 
@@ -50,21 +52,25 @@ public class TowerGameScript : MonoBehaviour
     private void WinGame()
     {
         isGameOver = true;
-        SceneManager.LoadScene("WinScene"); // Load Win Scene
+        YouWinPanel.SetActive(true);
+
+
     }
     // Checks if any object has fallen onto the ground plane
     private void CheckGameOver()
     {
+        if (isGameOver) return; // Prevent game over check if the game is already won
+
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Stackable"))
         {
             if (obj.transform.position.y < groundPlane.position.y) // If it falls below ground level
             {
                 GameOver();
                 break;
-
             }
         }
     }
+
 
     // Ends the game when an object falls to the ground
     private void GameOver()
@@ -77,7 +83,7 @@ public class TowerGameScript : MonoBehaviour
     // Restart the game by reloading the scene
     public void RestartGame()
     {
-        
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Reload the current scene
     }
 
