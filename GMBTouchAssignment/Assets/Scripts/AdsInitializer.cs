@@ -8,8 +8,8 @@ public class AdsInitializer : MonoBehaviour, IUnityAdsInitializationListener
     [SerializeField] bool _testMode = true;
     private string _gameId;
 
-
     [SerializeField] RewardedAdsButton rewardedAdsButton;
+    [SerializeField] InterstitialAdsButton interstitialAdsButton;
 
     void Awake()
     {
@@ -19,11 +19,11 @@ public class AdsInitializer : MonoBehaviour, IUnityAdsInitializationListener
     public void InitializeAds()
     {
 #if UNITY_IOS
-            _gameId = _iOSGameId;
+        _gameId = _iOSGameId;
 #elif UNITY_ANDROID
         _gameId = _androidGameId;
 #elif UNITY_EDITOR
-            _gameId = _androidGameId; //Only for testing the functionality in the Editor
+        _gameId = _androidGameId;
 #endif
         if (!Advertisement.isInitialized && Advertisement.isSupported)
         {
@@ -31,11 +31,11 @@ public class AdsInitializer : MonoBehaviour, IUnityAdsInitializationListener
         }
     }
 
-
     public void OnInitializationComplete()
     {
         Debug.Log("Unity Ads initialization complete.");
         rewardedAdsButton.LoadAd();
+        interstitialAdsButton.LoadAd();
     }
 
     public void OnInitializationFailed(UnityAdsInitializationError error, string message)
