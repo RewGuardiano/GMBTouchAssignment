@@ -9,14 +9,15 @@ public class CameraController : MonoBehaviour
     public float zoomSpeed = 1f;
 
 
+
     private float lastPinchDistance;
     private Vector2 lastMidPoint;
     private ManagerScript managerScript;
     private Vector3 lastPanPosition;
     private bool isPanning = false;
-    private Vector2 lastTouchPosition;
  
 
+    public bool useTouchControls = false;
 
     public Transform groundPlane;
 
@@ -29,7 +30,6 @@ public class CameraController : MonoBehaviour
     void Update()
     {
 
-        
         if (Input.touchCount == 1)
         {
             Touch t = Input.GetTouch(0);
@@ -114,6 +114,6 @@ public class CameraController : MonoBehaviour
         Vector3 zoomDirection = transform.forward * (pinchDelta * zoomSpeed * Time.deltaTime);
         transform.position += zoomDirection;
     }
+   
 
-  
 }

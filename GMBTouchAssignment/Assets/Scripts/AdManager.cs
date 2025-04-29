@@ -10,28 +10,33 @@ public class AdManager : MonoBehaviour
 {
     private BannerView _bannerView;
     private InterstitialAd interstitial;
-    public string adUnitId;
+    public string bannerAdUnitId; // Use separate fields for clarity
+    public string interstitialAdUnitId;
+    public string rewardedAdUnitId;
 
-    // Start is called before the first frame update
     void Start()
     {
         // Initialize the Google Mobile Ads SDK.
         MobileAds.Initialize((InitializationStatus initStatus) =>
         {
-            // This callback is called once the MobileAds SDK is initialized.
+            Debug.Log("Mobile Ads SDK initialized.");
+            // Only request interstitial and rewarded ads, not banner
+            RequestInterstitial();
+            RequestRewarded();
         });
-
-        this.RequestBanner();
-        this.RequestInterstitial();
-        this.RequestRewarded();
     }
-
+    // Called by the "Banner" button on the You Win screen
+    public void ShowBannerAd()
+    {
+        RequestBanner();
+    }
     //Banner ads
 
     private void RequestBanner()
     {
+ //test unitId ca-app-pub-3940256099942544/6300978111
 #if UNITY_ANDROID
-        string adUnitId = "ca-app-pub-3940256099942544/6300978111";
+        bannerAdUnitId = "ca-app-pub-6797505183137628/9920708735";
 #elif UNITY_IPHONE
             string adUnitId = "";
 #else
@@ -50,7 +55,9 @@ public class AdManager : MonoBehaviour
         }
 
         // Create a 320x50 banner at top of the screen
-        _bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Top);
+        _bannerView = new BannerView(bannerAdUnitId, AdSize.Banner, AdPosition.Top);
+
+        LoadAd();
 
     }
 
@@ -69,25 +76,15 @@ public class AdManager : MonoBehaviour
 
     public void LoadAd()
     {
-        // create an instance of a banner view first.
         if (_bannerView == null)
         {
-            Debug.Log("Creating banner view");
-
-            // If we already have a banner, destroy the old one.
-            if (_bannerView != null)
-            {
-                DestroyAd();
-            }
-
-            // Create a 320x50 banner at top of the screen
-            _bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Top);
+            RequestBanner(); // Recreate banner if null
         }
 
-        // create our request used to load the ad.
+        // Create an ad request
         var adRequest = new AdRequest();
 
-        // send the request to load the ad.
+        // Load the banner ad
         Debug.Log("Loading banner ad.");
         _bannerView.LoadAd(adRequest);
     }
@@ -97,8 +94,9 @@ public class AdManager : MonoBehaviour
 
     private void RequestInterstitial()
     {
+        //ca-app-pub-3940256099942544/1033173712 test unitID
 #if UNITY_ANDROID
-        string adUnitId = "ca-app-pub-3940256099942544/1033173712";
+        interstitialAdUnitId = "ca-app-pub-6797505183137628/4372329580";
 #elif UNITY_IPHONE
             string adUnitId = "";
 #else
@@ -123,7 +121,7 @@ public class AdManager : MonoBehaviour
         var adRequest = new AdRequest();
 
         // send the request to load the ad.
-        InterstitialAd.Load(adUnitId, adRequest,
+        InterstitialAd.Load(interstitialAdUnitId, adRequest,
             (InterstitialAd ad, LoadAdError error) =>
             {
                 // if error is not null, the load request failed.
@@ -162,7 +160,7 @@ public class AdManager : MonoBehaviour
         var adRequest = new AdRequest();
 
         // send the request to load the ad.
-        InterstitialAd.Load(adUnitId, adRequest,
+        InterstitialAd.Load(interstitialAdUnitId, adRequest,
             (InterstitialAd ad, LoadAdError error) =>
             {
                 // if error is not null, the load request failed.
@@ -201,8 +199,9 @@ public class AdManager : MonoBehaviour
 
     private void RequestRewarded()
     {
+        //ca-app-pub-3940256099942544/5224354917 test unitID
 #if UNITY_ANDROID
-        string adUnitId = "ca-app-pub-3940256099942544/5224354917";
+        rewardedAdUnitId = "ca-app-pub-6797505183137628/2150029925";
 #elif UNITY_IPHONE
             string adUnitId = "";
 #else
@@ -222,7 +221,7 @@ public class AdManager : MonoBehaviour
         var adRequest = new AdRequest();
 
         // send the request to load the ad.
-        RewardedAd.Load(adUnitId, adRequest,
+        RewardedAd.Load(rewardedAdUnitId, adRequest,
             (RewardedAd ad, LoadAdError error) =>
             {
                 // if error is not null, the load request failed.
@@ -260,7 +259,7 @@ public class AdManager : MonoBehaviour
         var adRequest = new AdRequest();
 
         // send the request to load the ad.
-        RewardedAd.Load(adUnitId, adRequest,
+        RewardedAd.Load(rewardedAdUnitId, adRequest,
             (RewardedAd ad, LoadAdError error) =>
             {
                 // if error is not null, the load request failed.

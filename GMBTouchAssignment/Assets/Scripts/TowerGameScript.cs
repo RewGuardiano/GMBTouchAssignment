@@ -12,13 +12,14 @@ public class TowerGameScript : MonoBehaviour
     public GameObject gameOverPanel;    // UI Panel to show game over screen
     public GameObject YouWinPanel;
     public GameObject cubePrefab;
+    public AdManager adManager;
     public Transform spawnPoint;
     private bool isGameOver = false;
 
     private int score = 0;              // Tracks the score based on stack height
-    private int winScore = 7; 
+    private int winScore = 10; 
 
-    //getter
+    // Getter
     public bool IsGameOver()
     {
         return isGameOver;
@@ -43,7 +44,7 @@ public class TowerGameScript : MonoBehaviour
         score++;
         scoreText.text = "Score: " + score;
 
-        if(score >= winScore)
+        if (score >= winScore)
         {
             WinGame();
         }
@@ -53,9 +54,8 @@ public class TowerGameScript : MonoBehaviour
     {
         isGameOver = true;
         YouWinPanel.SetActive(true);
-
-
     }
+
     // Checks if any object has fallen onto the ground plane
     private void CheckGameOver()
     {
@@ -67,31 +67,52 @@ public class TowerGameScript : MonoBehaviour
             {
                 GameOver();
                 break;
-
             }
         }
     }
-
 
     // Ends the game when an object falls to the ground
     private void GameOver()
     {
         gameOverPanel.SetActive(true);
         isGameOver = true;
-        
     }
 
     // Restart the game by reloading the scene
     public void RestartGame()
     {
-
+        // Destroy the banner ad
+        if (adManager != null)
+        {
+            adManager.DestroyAd();
+        }
+        else
+        {
+            Debug.LogWarning("AdManager reference is missing!");
+        }
         SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Reload the current scene
     }
 
-    
+    public void ShowBannerAd()
+    {
+        // Show the banner ad when the "Banner" button is pressed
+        if (adManager != null)
+        {
+            adManager.ShowBannerAd();
+        }
+        else
+        {
+            Debug.LogWarning("AdManager reference is missing!");
+        }
+    }
 
     public void SpawnNewCube()
     {
-        Instantiate(cubePrefab, spawnPoint.position, Quaternion.identity);
+        GameObject newCube = Instantiate(cubePrefab, spawnPoint.position, Quaternion.identity);
+        CubeScript cubeScript = newCube.GetComponent<CubeScript>();
+        if (cubeScript != null)
+        {
+            cubeScript.SetLandingZoneZ(spawnPoint.position.z); // Pass the landing zone Z-position
+        }
     }
 }
