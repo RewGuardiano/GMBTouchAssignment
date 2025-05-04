@@ -8,39 +8,41 @@ public class CameraController : MonoBehaviour
     public float rotationSpeed = 0.2f;
     public float zoomSpeed = 1f;
 
-
-
-    private float lastPinchDistance;
-    private Vector2 lastMidPoint;
-    private ManagerScript managerScript;
-    private Vector3 lastPanPosition;
-    private bool isPanning = false;
- 
-
-    public bool useTouchControls = false;
+    internal float lastPinchDistance;
+    internal Vector2 lastMidPoint;
+    internal ManagerScript managerScript;
+    internal bool isPanning = false;
+    internal Vector3 lastPanPosition;
 
     public Transform groundPlane;
-
+    internal JoystickController joystick;
 
     void Start()
     {
         managerScript = FindObjectOfType<ManagerScript>();
+        joystick = FindObjectOfType<JoystickController>();
     }
 
     void Update()
     {
-
-        if (Input.touchCount == 1)
+        // Handle joystick panning first to ensure it takes priority
+        if (joystick.IsJoystickActive && selectedObject == null)
+        {
+            Vector2 joystickInput = joystick.JoystickInput;
+            Vector3 right = Vector3.ProjectOnPlane(transform.right, Vector3.up).normalized;
+            Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
+            Vector3 panDirection = (right * joystickInput.x + forward * joystickInput.y) * panSpeed * Time.deltaTime;
+            transform.position += panDirection;
+        }
+        // Handle single-touch panning outside the joystick
+        else if (Input.touchCount == 1 && selectedObject == null)
         {
             Touch t = Input.GetTouch(0);
 
             if (t.phase == TouchPhase.Began)
             {
-                if (selectedObject == null)
-                {
-                    lastPanPosition = t.position;
-                    isPanning = true;
-                }
+                lastPanPosition = t.position;
+                isPanning = true;
             }
             else if (t.phase == TouchPhase.Moved && isPanning)
             {
@@ -51,6 +53,7 @@ public class CameraController : MonoBehaviour
                 isPanning = false;
             }
         }
+        // Handle two-finger rotation and zoom
         else if (Input.touchCount == 2)
         {
             Touch touch1 = Input.GetTouch(0);
@@ -60,13 +63,11 @@ public class CameraController : MonoBehaviour
 
             if (touch1.phase == TouchPhase.Began || touch2.phase == TouchPhase.Began)
             {
-                //Initialize rotation/zoom
                 lastMidPoint = currentMidpoint;
                 lastPinchDistance = Vector2.Distance(touch1.position, touch2.position);
             }
             else if (touch1.phase == TouchPhase.Moved || touch2.phase == TouchPhase.Moved)
             {
-                //rotation of camera based on midpoint movement
                 Vector2 cameraRotationDelta = currentMidpoint - lastMidPoint;
                 float horizontalAngle = cameraRotationDelta.x * rotationSpeed;
                 OrbitCameraHorizontal(horizontalAngle);
@@ -75,9 +76,7 @@ public class CameraController : MonoBehaviour
                 OrbitCameraVertical(verticalAngle);
                 lastMidPoint = currentMidpoint;
 
-                //Zoom camera base on pinch distance
-
-                float currentPinchDistance = Vector2.Distance(touch1.position,touch2.position);
+                float currentPinchDistance = Vector2.Distance(touch1.position, touch2.position);
                 float pinchDelta = currentPinchDistance - lastPinchDistance;
                 CameraZoom(pinchDelta * zoomSpeed);
                 lastPinchDistance = currentPinchDistance;
@@ -88,32 +87,24 @@ public class CameraController : MonoBehaviour
     void PanCamera(Vector3 newPanPosition)
     {
         Vector3 offset = Camera.main.ScreenToViewportPoint(lastPanPosition - newPanPosition);
-
-        Vector3 right = Vector3.ProjectOnPlane(transform.right, Vector3.up);
-        Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
-
-        Vector3 move = (right * offset.x + forward * offset.y) * panSpeed;
-
+        Vector3 move = new Vector3(-offset.x * panSpeed, 0, -offset.y * panSpeed) * Time.deltaTime;
         transform.Translate(move, Space.World);
-
         lastPanPosition = newPanPosition;
     }
 
-    void OrbitCameraHorizontal(float angle)
+    public void OrbitCameraHorizontal(float angle)
     {
         transform.RotateAround(transform.position, groundPlane.up, angle);
     }
 
-    void OrbitCameraVertical(float angle)
+    internal void OrbitCameraVertical(float angle)
     {
         transform.RotateAround(transform.position, transform.right, angle);
     }
-    void CameraZoom(float pinchDelta)
+
+    internal void CameraZoom(float pinchDelta)
     {
-        //Move the camera along its forward direction based on pinch delta
         Vector3 zoomDirection = transform.forward * (pinchDelta * zoomSpeed * Time.deltaTime);
         transform.position += zoomDirection;
     }
-   
-
 }
