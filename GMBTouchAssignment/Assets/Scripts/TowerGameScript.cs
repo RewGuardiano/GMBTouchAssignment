@@ -12,7 +12,6 @@ public class TowerGameScript : MonoBehaviour
     public GameObject gameOverPanel;    // UI Panel to show game over screen
     public GameObject YouWinPanel;
     public GameObject cubePrefab;
-    public AdManager adManager;
     public Transform spawnPoint;
     private bool isGameOver = false;
 
@@ -81,30 +80,11 @@ public class TowerGameScript : MonoBehaviour
     // Restart the game by reloading the scene
     public void RestartGame()
     {
-        // Destroy the banner ad
-        if (adManager != null)
-        {
-            adManager.DestroyAd();
-        }
-        else
-        {
-            Debug.LogWarning("AdManager reference is missing!");
-        }
+     
         SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Reload the current scene
     }
 
-    public void ShowBannerAd()
-    {
-        // Show the banner ad when the "Banner" button is pressed
-        if (adManager != null)
-        {
-            adManager.ShowBannerAd();
-        }
-        else
-        {
-            Debug.LogWarning("AdManager reference is missing!");
-        }
-    }
+
 
     public void SpawnNewCube()
     {
